@@ -1,5 +1,6 @@
 import numpy as np
-from OpenGL.GL import *
+from OpenGL.GL import GL_POINTS, glBegin, glColor3f, glEnd, glVertex2f
+
 
 def bresenham_line(A: np.ndarray, B: np.ndarray):
     """
@@ -18,7 +19,6 @@ def bresenham_line(A: np.ndarray, B: np.ndarray):
     glBegin(GL_POINTS)
     glColor3f(1.0, 1.0, 1.0)
     while True:
-        # print(x, y)
         glVertex2f(x, y)
         e = 2 * error
         if e >= dy:
@@ -26,7 +26,7 @@ def bresenham_line(A: np.ndarray, B: np.ndarray):
                 break
             error += dy
             x += sx
-        
+
         if e <= dx:
             if y == B[1]:
                 break
@@ -51,7 +51,7 @@ def bresenham_circle(C: np.ndarray, r: float):
     while x >= y:
         _draw_simetric_points(C[0], C[1], x, y)
         y += 1
-        t1 = t1 + y
+        t1 += y
         t2 = t1 - x
         if t2 >= 0:
             t1 = t2

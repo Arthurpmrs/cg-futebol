@@ -1,14 +1,24 @@
 import pygame
-from OpenGL.GL import *
+from OpenGL.GL import (
+    GL_COLOR_BUFFER_BIT,
+    GL_MODELVIEW,
+    GL_PROJECTION,
+    glClear,
+    glLoadIdentity,
+    glMatrixMode,
+    glOrtho,
+)
 from OpenGL.GLUT import glutInit
+
 from soccer.ball import Ball
 from soccer.field import Field
+
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_mode((1000, 800), pygame.OPENGL | pygame.DOUBLEBUF)
-        pygame.display.set_caption("Futebol")
+        pygame.display.set_caption('Futebol')
 
         glutInit()
         glMatrixMode(GL_PROJECTION)

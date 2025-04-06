@@ -1,6 +1,7 @@
 import pygame
-from OpenGL.GL import *
+from OpenGL.GL import glPopMatrix, glPushMatrix, glRotatef, glTranslatef
 from OpenGL.GLUT import glutWireSphere
+
 
 class Ball:
     INITIAL_POSITION = [0.0, 0.0]
@@ -19,7 +20,7 @@ class Ball:
         glTranslatef(*self.position, 0.0)
 
         glutWireSphere(10.0, 12, 8)
-        
+
         glPopMatrix()
 
     def update(self, keys: pygame.key.ScancodeWrapper):
@@ -37,6 +38,6 @@ class Ball:
             self.rot_angle -= 3
         if keys[pygame.K_e]:
             self.reset_position()
-    
+
     def reset_position(self):
         self.position = [*self.INITIAL_POSITION]
