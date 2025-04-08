@@ -13,8 +13,8 @@ class Field:
         self.big_area_length = size_factor * 40
         self.small_area_length = size_factor * 5.5
         self.small_area_width = size_factor * 18.3
-        self.goal_length = size_factor * 2.4
-        self.goal_width = size_factor * 7.3
+        self.goal_length = size_factor * 8
+        self.goal_width = size_factor * 17
 
     def draw(self):
         glPushMatrix()
@@ -25,6 +25,12 @@ class Field:
 
         glRotatef(180, 1, 0, 0)
         self._draw_big_area()
+
+        self._draw_goal()
+        
+        glRotatef(180, 1, 0, 0)
+        self._draw_goal()
+
 
         glPopMatrix()
 
@@ -70,4 +76,30 @@ class Field:
 
         bresenham_line(A, C)
         bresenham_line(A, B)
+        bresenham_line(B, D)
+
+    def _draw_goal(self):
+        A = np.array(
+            [
+                -self.goal_width // 2,
+                self.length // 2 + self.goal_length // 2,
+            ],
+            dtype=np.float32
+        )
+        B = np.array(
+            [
+                self.goal_width // 2,
+                self.length // 2 + self.goal_length // 2,
+            ],
+            dtype=np.float32
+        )
+        C = np.array(
+            [-self.goal_width // 2, self.length // 2], dtype=np.float32
+        )
+        D = np.array(
+            [self.goal_width // 2, self.length // 2], dtype=np.float32
+        )
+
+        bresenham_line(A, B)
+        bresenham_line(A, C)
         bresenham_line(B, D)
