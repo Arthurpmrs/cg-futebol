@@ -4,6 +4,7 @@ from OpenGL.GL import (
     GL_MODELVIEW,
     GL_PROJECTION,
     glClear,
+    glClearColor,
     glLoadIdentity,
     glMatrixMode,
     glOrtho,
@@ -42,6 +43,7 @@ class Game:
             self.ball.update(keys)
 
             glClear(GL_COLOR_BUFFER_BIT)
+            glClearColor(0.0, 0.65, 0.075, 1)
             self.field.draw()
             self.ball.draw()
 
