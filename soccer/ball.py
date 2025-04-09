@@ -30,36 +30,26 @@ class Ball:
         keys: pygame.key.ScancodeWrapper,
         collision_system: CollisionSystem,
     ):
+        new_x, new_y = self.position
         if keys[pygame.K_LEFT]:
-            collision = collision_system.check_collisions(
-                self.position[0] - self.SPEED, self.position[1]
-            )
-            if collision == Collision.NONE:
-                self.position[0] -= self.SPEED
-                self.rot_angle -= 3
+            new_x -= self.SPEED
+            self.rot_angle -= 3
         if keys[pygame.K_RIGHT]:
-            collision = collision_system.check_collisions(
-                self.position[0] + self.SPEED, self.position[1]
-            )
-            if collision == Collision.NONE:
-                self.position[0] += self.SPEED
-                self.rot_angle += 3
+            new_x += self.SPEED
+            self.rot_angle += 3
         if keys[pygame.K_UP]:
-            collision = collision_system.check_collisions(
-                self.position[0], self.position[1] + self.SPEED
-            )
-            if collision == Collision.NONE:
-                self.position[1] += self.SPEED
-                self.rot_angle += 3
+            new_y += self.SPEED
+            self.rot_angle += 2
         if keys[pygame.K_DOWN]:
-            collision = collision_system.check_collisions(
-                self.position[0], self.position[1] - self.SPEED
-            )
-            if collision == Collision.NONE:
-                self.position[1] -= self.SPEED
-                self.rot_angle += 3
+            new_y -= self.SPEED
+            self.rot_angle -= 2
         if keys[pygame.K_e]:
             self.reset_position()
+            return
+
+        collision = collision_system.check_collisions(new_x, new_y)
+        if collision == Collision.NONE:
+            self.position = [new_x, new_y]
 
     def reset_position(self):
         self.position = [*self.INITIAL_POSITION]
