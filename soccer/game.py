@@ -11,6 +11,7 @@ from OpenGL.GL import (
 from OpenGL.GLUT import glutInit
 
 from soccer.ball import Ball
+from soccer.collision import CollisionSystem
 from soccer.field import Field
 
 
@@ -30,6 +31,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.field = Field(size_factor=6)
         self.ball = Ball()
+        self.collision_system = CollisionSystem()
+        self.collision_system.add_collidable(self.field)
 
     def run(self):
         running = True
@@ -39,7 +42,7 @@ class Game:
                     running = False
 
             keys = pygame.key.get_pressed()
-            self.ball.update(keys)
+            self.ball.update(keys, self.collision_system)
 
             glClear(GL_COLOR_BUFFER_BIT)
             self.field.draw()

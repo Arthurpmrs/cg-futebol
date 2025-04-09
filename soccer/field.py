@@ -2,9 +2,10 @@ import numpy as np
 from OpenGL.GL import glPopMatrix, glPushMatrix, glRotatef
 
 from soccer.bresenham import bresenham_circle, bresenham_line
+from soccer.collision import Collidable, Collision
 
 
-class Field:
+class Field(Collidable):
     def __init__(self, size_factor: int = 1):
         self.width = size_factor * 90.0
         self.length = size_factor * 120.0
@@ -27,6 +28,22 @@ class Field:
         self._draw_big_area()
 
         glPopMatrix()
+
+    def check_collision(self, x: float, y: float) -> Collision:
+        if y >= -self.length / 2 and y <= self.length / 2:
+            if x < -self.width / 2 or x > self.width / 2:
+                return Collision.LATERAL
+        if y < -self.length / 2:
+            if x > -self.goal_width / 2 and x < self.goal_width / 2:
+                return Collision.GOAL_B
+            else:
+                return Collision.CORNER_B
+        if y > self.length / 2:
+            if x > -self.goal_width / 2 and x < self.goal_width / 2:
+                return Collision.GOAL_A
+            else:
+                return Collision.CORNER_A
+        return Collision.NONE
 
     def _draw_field(self):
         A = np.array([-self.width / 2, -self.length / 2], dtype=np.float32)

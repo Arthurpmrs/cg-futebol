@@ -2,6 +2,8 @@ import pygame
 from OpenGL.GL import glPopMatrix, glPushMatrix, glRotatef, glTranslatef
 from OpenGL.GLUT import glutWireSphere
 
+from soccer.collision import Collision, CollisionSystem
+
 
 class Ball:
     INITIAL_POSITION = [0.0, 0.0]
@@ -23,19 +25,39 @@ class Ball:
 
         glPopMatrix()
 
-    def update(self, keys: pygame.key.ScancodeWrapper):
+    def update(
+        self,
+        keys: pygame.key.ScancodeWrapper,
+        collision_system: CollisionSystem,
+    ):
         if keys[pygame.K_LEFT]:
-            self.position[0] -= self.SPEED
-            self.rot_angle -= 3
+            collision = collision_system.check_collisions(
+                self.position[0] - self.SPEED, self.position[1]
+            )
+            if collision == Collision.NONE:
+                self.position[0] -= self.SPEED
+                self.rot_angle -= 3
         if keys[pygame.K_RIGHT]:
-            self.position[0] += self.SPEED
-            self.rot_angle += 3
+            collision = collision_system.check_collisions(
+                self.position[0] + self.SPEED, self.position[1]
+            )
+            if collision == Collision.NONE:
+                self.position[0] += self.SPEED
+                self.rot_angle += 3
         if keys[pygame.K_UP]:
-            self.position[1] += self.SPEED
-            self.rot_angle += 3
+            collision = collision_system.check_collisions(
+                self.position[0], self.position[1] + self.SPEED
+            )
+            if collision == Collision.NONE:
+                self.position[1] += self.SPEED
+                self.rot_angle += 3
         if keys[pygame.K_DOWN]:
-            self.position[1] -= self.SPEED
-            self.rot_angle -= 3
+            collision = collision_system.check_collisions(
+                self.position[0], self.position[1] - self.SPEED
+            )
+            if collision == Collision.NONE:
+                self.position[1] -= self.SPEED
+                self.rot_angle += 3
         if keys[pygame.K_e]:
             self.reset_position()
 
