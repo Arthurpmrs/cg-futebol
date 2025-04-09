@@ -1,5 +1,5 @@
 import pygame
-from OpenGL.GL import glPopMatrix, glPushMatrix, glRotatef, glTranslatef
+from OpenGL.GL import glPopMatrix, glPushMatrix, glRotatef, glTranslatef, glColor3f
 from OpenGL.GLUT import glutWireSphere
 
 from soccer.collision import Collision, CollisionSystem
@@ -21,6 +21,7 @@ class Ball:
         glTranslatef(-self.position[0], -self.position[1], 0.0)
         glTranslatef(*self.position, 0.0)
 
+        glColor3f(0, 0, 0)
         glutWireSphere(10.0, 12, 8)
 
         glPopMatrix()
