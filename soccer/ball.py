@@ -8,16 +8,17 @@ from OpenGL.GL import (
 )
 from OpenGL.GLUT import glutWireSphere
 
-from soccer.collision import Collision, CollisionSystem
+from soccer.collision import BoundingBox, Collision, CollisionSystem
 
 
 class Ball:
     INITIAL_POSITION = [0.0, 0.0]
     SPEED = 2.0
 
-    def __init__(self):
+    def __init__(self, radius: float = 10):
         self.position = [*self.INITIAL_POSITION]
         self.rot_angle = 0.0
+        self.radius = radius
 
     def draw(self):
         glPushMatrix()
@@ -28,9 +29,20 @@ class Ball:
         glTranslatef(*self.position, 0.0)
 
         glColor3f(0, 0, 0)
-        glutWireSphere(10.0, 12, 8)
+        glutWireSphere(self.radius, 12, 8)
 
         glPopMatrix()
+
+    def get_bouding_box(self, pos: tuple = None) -> tuple:
+        if not pos:
+            pos = self.position
+
+        return BoundingBox(
+            x_min=pos[0] - self.radius,
+            x_max=pos[0] + self.radius,
+            y_min=pos[1] - self.radius,
+            y_max=pos[1] + self.radius,
+        )
 
     def update(
         self,
@@ -53,8 +65,8 @@ class Ball:
         if keys[pygame.K_e]:
             self.reset_position()
             return
-
-        collision = collision_system.check_collisions(new_x, new_y)
+        bb = self.get_bouding_box((new_x, new_y))
+        collision = collision_system.check_collisions(bb)
         if collision == Collision.GOAL_A:
             # Add here the goal rendering text and mode
             # Add here the score board increase for team A

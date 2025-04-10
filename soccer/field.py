@@ -10,7 +10,12 @@ from OpenGL.GL import (
 )
 
 from soccer.bresenham import bresenham_circle, bresenham_line
-from soccer.collision import Collidable, Collision
+from soccer.collision import (
+    BoundingBox,
+    Collidable,
+    Collision,
+    CollisionSystem,
+)
 
 
 class Field(Collidable):
@@ -24,6 +29,7 @@ class Field(Collidable):
         self.small_area_width = size_factor * 27.3
         self.goal_length = size_factor * 8.5
         self.goal_width = size_factor * 18.3
+        self.bounding_boxes = self.get_bounding_box()
 
     def draw(self):
         glPushMatrix()
@@ -43,26 +49,16 @@ class Field(Collidable):
         glRotatef(180, 1, 0, 0)
         self._draw_goal()
 
-        self._draw_mark(0, 0)
-        self._draw_mark(0, -3 * self.small_area_length)
-        self._draw_mark(0, 3 * self.small_area_length)
+        Field._draw_mark(0, 0)
+        Field._draw_mark(0, -3 * self.small_area_length)
+        Field._draw_mark(0, 3 * self.small_area_length)
 
         glPopMatrix()
 
-    def check_collision(self, x: float, y: float) -> Collision:
-        if y >= -self.length / 2 and y <= self.length / 2:
-            if x < -self.width / 2 or x > self.width / 2:
-                return Collision.LATERAL
-        if y < -self.length / 2:
-            if x > -self.goal_width / 2 and x < self.goal_width / 2:
-                return Collision.GOAL_B
-            else:
-                return Collision.CORNER_B
-        if y > self.length / 2:
-            if x > -self.goal_width / 2 and x < self.goal_width / 2:
-                return Collision.GOAL_A
-            else:
-                return Collision.CORNER_A
+    def check_collision(self, bb: BoundingBox) -> Collision:
+        for section_bb, collision_type in self.bounding_boxes:
+            if CollisionSystem.aabb_collision(bb, section_bb):
+                return collision_type
         return Collision.NONE
 
     def _draw_field(self):
@@ -161,7 +157,8 @@ class Field(Collidable):
         bresenham_line(A, C)
         bresenham_line(B, D)
 
-    def _draw_mark(self, x, y):
+    @staticmethod
+    def _draw_mark(x, y):
         CENTER = np.array([x, y], dtype=np.float32)
         radius = 5
         num_segments = 100
@@ -175,3 +172,80 @@ class Field(Collidable):
                 CENTER[1] + (radius * np.sin(angle)),
             )
         glEnd()
+
+    def get_bounding_box(self) -> tuple[BoundingBox, Collision]:
+        tol = 25.0
+        return [
+            (
+                BoundingBox(
+                    -self.width / 2 - tol,
+                    -self.length / 2,
+                    -self.width / 2 - tol,
+                    self.length / 2,
+                ),
+                Collision.LATERAL_LEFT,
+            ),
+            (
+                BoundingBox(
+                    self.width / 2 + tol,
+                    -self.length / 2,
+                    self.width / 2 + tol,
+                    self.length / 2,
+                ),
+                Collision.LATERAL_RIGHT,
+            ),
+            (
+                BoundingBox(
+                    -self.width / 2,
+                    self.length / 2 + tol,
+                    -self.goal_width / 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.CORNER_A_LEFT,
+            ),
+            (
+                BoundingBox(
+                    self.goal_width / 2,
+                    self.length / 2 + tol,
+                    self.width / 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.CORNER_A_RIGHT,
+            ),
+            (
+                BoundingBox(
+                    -self.goal_width / 2,
+                    self.length / 2 + tol,
+                    self.goal_width / 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.GOAL_A,
+            ),
+            (
+                BoundingBox(
+                    -self.width / 2,
+                    -self.length / 2 - tol,
+                    -self.goal_width / 2,
+                    -self.length / 2 - tol,
+                ),
+                Collision.CORNER_B_LEFT,
+            ),
+            (
+                BoundingBox(
+                    self.goal_width / 2,
+                    -self.length / 2 - tol,
+                    self.width / 2,
+                    -self.length / 2 - tol,
+                ),
+                Collision.CORNER_B_RIGHT,
+            ),
+            (
+                BoundingBox(
+                    -self.goal_width / 2,
+                    -self.length / 2 - tol,
+                    self.goal_width / 2,
+                    -self.length / 2 - tol,
+                ),
+                Collision.GOAL_B,
+            ),
+        ]
