@@ -179,24 +179,24 @@ class Field(Collidable):
             (
                 BoundingBox(
                     -self.width / 2 - tol,
-                    -self.length / 2,
+                    -self.length / 2 - tol,
                     -self.width / 2 - tol,
-                    self.length / 2,
+                    self.length / 2 + tol,
                 ),
                 Collision.LATERAL_LEFT,
             ),
             (
                 BoundingBox(
                     self.width / 2 + tol,
-                    -self.length / 2,
+                    -self.length / 2 - tol,
                     self.width / 2 + tol,
-                    self.length / 2,
+                    self.length / 2 + tol,
                 ),
                 Collision.LATERAL_RIGHT,
             ),
             (
                 BoundingBox(
-                    -self.width / 2,
+                    -self.width / 2 - tol,
                     self.length / 2 + tol,
                     -self.goal_width / 2,
                     self.length / 2 + tol,
@@ -207,7 +207,7 @@ class Field(Collidable):
                 BoundingBox(
                     self.goal_width / 2,
                     self.length / 2 + tol,
-                    self.width / 2,
+                    self.width / 2 + tol,
                     self.length / 2 + tol,
                 ),
                 Collision.CORNER_A_RIGHT,
@@ -223,7 +223,7 @@ class Field(Collidable):
             ),
             (
                 BoundingBox(
-                    -self.width / 2,
+                    -self.width / 2 - tol,
                     -self.length / 2 - tol,
                     -self.goal_width / 2,
                     -self.length / 2 - tol,
@@ -234,7 +234,7 @@ class Field(Collidable):
                 BoundingBox(
                     self.goal_width / 2,
                     -self.length / 2 - tol,
-                    self.width / 2,
+                    self.width / 2 + tol,
                     -self.length / 2 - tol,
                 ),
                 Collision.CORNER_B_RIGHT,
