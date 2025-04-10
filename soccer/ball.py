@@ -1,5 +1,11 @@
 import pygame
-from OpenGL.GL import glPopMatrix, glPushMatrix, glRotatef, glTranslatef, glColor3f
+from OpenGL.GL import (
+    glColor3f,
+    glPopMatrix,
+    glPushMatrix,
+    glRotatef,
+    glTranslatef,
+)
 from OpenGL.GLUT import glutWireSphere
 
 from soccer.collision import Collision, CollisionSystem
@@ -49,8 +55,22 @@ class Ball:
             return
 
         collision = collision_system.check_collisions(new_x, new_y)
-        if collision == Collision.NONE:
+        if collision == Collision.GOAL_A:
+            # Add here the goal rendering text and mode
+            # Add here the score board increase for team A
+            self.position = [0.0, 0.0]
+            print('GOAL FROM A')
+        elif collision == Collision.GOAL_B:
+            # Add here the goal rendering text and mode
+            # Add here the score board increase for team B
+            self.position = [0.0, 0.0]
+            print('GOAL FROM B')
+        elif collision == Collision.NONE:
             self.position = [new_x, new_y]
+        elif collision == Collision.PLAYER:
+            print('BLOCKED BY PLAYER!')
+        else:
+            print('OUT!')
 
     def reset_position(self):
         self.position = [*self.INITIAL_POSITION]
