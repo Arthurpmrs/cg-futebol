@@ -15,6 +15,7 @@ from soccer.ball import Ball
 from soccer.collision import CollisionSystem
 from soccer.field import Field
 from soccer.players import get_n_players
+from soccer.score import Score
 
 
 class Game:
@@ -48,6 +49,7 @@ class Game:
         )
         self.collision_system = CollisionSystem()
         self.collision_system.add_collidable(self.field)
+        self.score = Score()
         for player in self.players:
             self.collision_system.add_collidable(player)
 
@@ -59,13 +61,15 @@ class Game:
                     running = False
 
             keys = pygame.key.get_pressed()
-            self.ball.update(keys, self.collision_system)
+            self.ball.update(keys, self.collision_system, self.score)
 
             glClear(GL_COLOR_BUFFER_BIT)
             glClearColor(0.0, 0.65, 0.075, 1)
 
             self.field.draw()
             self.ball.draw()
+            self.score.draw()
+            self.score.draw_goal_text()
             for player in self.players:
                 player.draw()
 
