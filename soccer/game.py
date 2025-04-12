@@ -12,6 +12,7 @@ from OpenGL.GL import (
 from OpenGL.GLUT import glutInit
 
 from soccer.ball import Ball
+from soccer.button import Button
 from soccer.collision import CollisionSystem
 from soccer.field import Field
 from soccer.score import Score
@@ -19,8 +20,12 @@ from soccer.score import Score
 
 class Game:
     def __init__(self):
+        self.win_width = 1000
+        self.win_height = 800
         pygame.init()
-        pygame.display.set_mode((1000, 800), pygame.OPENGL | pygame.DOUBLEBUF)
+        pygame.display.set_mode(
+            (self.win_width, self.win_height), pygame.OPENGL | pygame.DOUBLEBUF
+        )
         pygame.display.set_caption('Futebol')
 
         glutInit()
@@ -33,9 +38,26 @@ class Game:
         self.clock = pygame.time.Clock()
         self.field = Field(size_factor=6)
         self.ball = Ball()
+
+        self.button = Button(
+            (-450, 240), 120, 50, 'Reset', self.on_reset_button_click
+        )
         self.collision_system = CollisionSystem()
         self.collision_system.add_collidable(self.field)
         self.score = Score()
+
+    def convert_mouse_pos(self, mx: float, my: float):
+        normalized_x = mx / self.win_width
+        normalized_y = my / self.win_height
+
+        opengl_x = -500 + normalized_x * 1000
+        opengl_y = 400 - normalized_y * 800
+
+        return opengl_x, opengl_y
+
+    def on_reset_button_click(self):
+        self.ball.reset_position()
+        self.score.reset_score()
 
     def run(self):
         running = True
@@ -43,6 +65,13 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mx, my = self.convert_mouse_pos(*pygame.mouse.get_pos())
+                    if self.button.is_clicked(mx, my):
+                        self.on_reset_button_click()
+                elif event.type == pygame.MOUSEMOTION:
+                    mx, my = self.convert_mouse_pos(*pygame.mouse.get_pos())
+                    self.button.update(mx, my)
 
             keys = pygame.key.get_pressed()
             self.ball.update(keys, self.collision_system, self.score)
@@ -53,6 +82,7 @@ class Game:
             self.ball.draw()
             self.score.draw()
             self.score.draw_goal_text()
+            self.button.draw()
 
             pygame.display.flip()
             self.clock.tick(60)

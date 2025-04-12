@@ -66,13 +66,11 @@ class Score:
 
             for i, c in enumerate(text):
                 char_elapsed = elapsed - (i * 0.1)
-                scale = 1.0 + 0.3 * math.sin(
-                    char_elapsed * 5
-                )
+                scale = 1.0 + 0.3 * math.sin(char_elapsed * 5)
 
                 glPushMatrix()
-                glTranslatef(i * 40, 0, 0) 
-                glScalef(scale * 0.6, scale * 0.6, 1) 
+                glTranslatef(i * 40, 0, 0)
+                glScalef(scale * 0.6, scale * 0.6, 1)
 
                 for dx in [-1, 0, 1]:
                     for dy in [-1, 0, 1]:
@@ -88,3 +86,7 @@ class Score:
             self.goal_timer -= 1
             if self.goal_timer <= 0:
                 self.show_goal_text = False
+
+    def reset_score(self):
+        self.scoreA = 0
+        self.scoreB = 0
