@@ -9,6 +9,7 @@ from OpenGL.GL import (
 from OpenGL.GLUT import glutWireSphere
 
 from soccer.collision import BoundingBox, Collision, CollisionSystem
+from soccer.score import Score
 
 
 class Ball:
@@ -48,6 +49,7 @@ class Ball:
         self,
         keys: pygame.key.ScancodeWrapper,
         collision_system: CollisionSystem,
+        score: Score,
     ):
         new_x, new_y = self.position
         if keys[pygame.K_LEFT]:
@@ -65,16 +67,17 @@ class Ball:
         if keys[pygame.K_e]:
             self.reset_position()
             return
+
         bb = self.get_bouding_box((new_x, new_y))
         collision = collision_system.check_collisions(bb)
         if collision == Collision.GOAL_A:
-            # Add here the goal rendering text and mode
-            # Add here the score board increase for team A
+            score.add_points('A')
+            score.on_goal()
             self.position = [0.0, 0.0]
             print('GOAL FROM A')
         elif collision == Collision.GOAL_B:
-            # Add here the goal rendering text and mode
-            # Add here the score board increase for team B
+            score.add_points('B')
+            score.on_goal()
             self.position = [0.0, 0.0]
             print('GOAL FROM B')
         elif collision == Collision.NONE:
@@ -85,4 +88,5 @@ class Ball:
             print('OUT!')
 
     def reset_position(self):
+        # Add some pause before can move the ball
         self.position = [*self.INITIAL_POSITION]
