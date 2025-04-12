@@ -23,6 +23,9 @@ class BoundingBox:
     x_max: float
     y_max: float
 
+    def __repr__(self):
+        return f'({self.x_min}, {self.y_min}) to ({self.x_max}, {self.y_max})'
+
 
 class Collidable(ABC):
     @abstractmethod

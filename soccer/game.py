@@ -33,14 +33,23 @@ class Game:
         self.clock = pygame.time.Clock()
         self.field = Field(size_factor=6)
         self.ball = Ball()
+        self.players = get_n_players(
+            positions=[
+                (85.0, 70.0),
+                (-85.0, 70.0),
+                (180.0, 150.0),
+                (0.0, 150.0),
+                (-180.0, 150.0),
+                (85.0, 240.0),
+                (0.0, 240.0),
+                (-85.0, 240.0),
+            ],
+            size=14.0,
+        )
         self.collision_system = CollisionSystem()
         self.collision_system.add_collidable(self.field)
-        self.players = get_n_players([
-            (0.0, 100.0),
-            (-100.0, 150.0),
-            (-150.0, 90.0),
-            (100.0, 100.0),
-        ])
+        for player in self.players:
+            self.collision_system.add_collidable(player)
 
     def run(self):
         running = True
@@ -54,6 +63,7 @@ class Game:
 
             glClear(GL_COLOR_BUFFER_BIT)
             glClearColor(0.0, 0.65, 0.075, 1)
+
             self.field.draw()
             self.ball.draw()
             for player in self.players:
