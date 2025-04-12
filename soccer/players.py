@@ -32,12 +32,14 @@ class Player(Collidable):
     orientation: float
 
     def __init__(
-        self, pos: int, size: float = 10.0, team_color=(0.855, 0.522, 0.961)
+        self,
+        pos: int,
+        size: float = 10.0,
+        team_color: tuple[float, float, float] = (0.02, 0.584, 0.98),
     ):
         self.position = pos
         self.size = size
         self.team_color = team_color
-
         self.skin_color = choice(SKIN_COLORS)
 
     def draw(self, orientation=0.0):
@@ -101,6 +103,6 @@ class Player(Collidable):
 
 
 def get_n_players(
-    positions: list[tuple[float, float]], size: float
+    positions: list[tuple[float, float]], **kwargs
 ) -> list[Player]:
-    return [Player(pos, size) for pos in positions]
+    return [Player(pos, **kwargs) for pos in positions]
