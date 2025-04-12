@@ -14,6 +14,7 @@ from OpenGL.GLUT import glutInit
 from soccer.ball import Ball
 from soccer.collision import CollisionSystem
 from soccer.field import Field
+from soccer.players import get_n_players
 
 
 class Game:
@@ -34,6 +35,12 @@ class Game:
         self.ball = Ball()
         self.collision_system = CollisionSystem()
         self.collision_system.add_collidable(self.field)
+        self.players = get_n_players([
+            (0.0, 100.0),
+            (-100.0, 150.0),
+            (-150.0, 90.0),
+            (100.0, 100.0),
+        ])
 
     def run(self):
         running = True
@@ -49,6 +56,8 @@ class Game:
             glClearColor(0.0, 0.65, 0.075, 1)
             self.field.draw()
             self.ball.draw()
+            for player in self.players:
+                player.draw()
 
             pygame.display.flip()
             self.clock.tick(60)
