@@ -65,20 +65,19 @@ class Score:
             glColor3f(1, 1, 0)
 
             for i, c in enumerate(text):
-                char_elapsed = elapsed - (i * 0.1)  # Delay para cada letra
+                char_elapsed = elapsed - (i * 0.1)
                 scale = 1.0 + 0.3 * math.sin(
                     char_elapsed * 5
-                )  # Efeito pulsante por letra
+                )
 
                 glPushMatrix()
-                glTranslatef(i * 40, 0, 0)  # Espaçamento maior entre letras
-                glScalef(scale * 0.6, scale * 0.6, 1)  # Escala individual
+                glTranslatef(i * 40, 0, 0) 
+                glScalef(scale * 0.6, scale * 0.6, 1) 
 
-                # Redesenha o caractere para simular espessura, analisar
                 for dx in [-1, 0, 1]:
                     for dy in [-1, 0, 1]:
                         glPushMatrix()
-                        glTranslatef(dx * 1, dy * 1, 0)  # Pequeno deslocamento
+                        glTranslatef(dx * 1, dy * 1, 0)
                         glutStrokeCharacter(GLUT_STROKE_ROMAN, ord(c))
                         glPopMatrix()
 
