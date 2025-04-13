@@ -222,6 +222,46 @@ class Field(Collidable):
                 Collision.GOAL_A,
             ),
             (
+                # Goal Left Internal Lateral
+                BoundingBox(
+                    -self.goal_width / 2,
+                    self.length / 2,
+                    -self.goal_width / 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.GOAL_A,
+            ),
+            (
+                # Goal Right Internal Lateral
+                BoundingBox(
+                    self.goal_width / 2,
+                    self.length / 2,
+                    self.goal_width / 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.GOAL_A,
+            ),
+            (
+                # Goal Left External Lateral
+                BoundingBox(
+                    -self.goal_width / 2 - 2,
+                    self.length / 2,
+                    -self.goal_width / 2 - 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.CORNER_A_LEFT,
+            ),
+            (
+                # Goal Right External Lateral
+                BoundingBox(
+                    self.goal_width / 2 + 2,
+                    self.length / 2,
+                    self.goal_width / 2 + 2,
+                    self.length / 2 + tol,
+                ),
+                Collision.CORNER_A_RIGHT,
+            ),
+            (
                 BoundingBox(
                     -self.width / 2 - tol,
                     -self.length / 2 - tol,
@@ -247,5 +287,45 @@ class Field(Collidable):
                     -self.length / 2 - tol,
                 ),
                 Collision.GOAL_B,
+            ),
+            (
+                # Goal Left Internal Lateral
+                BoundingBox(
+                    -self.goal_width / 2,
+                    -self.length / 2 - tol,
+                    -self.goal_width / 2,
+                    -self.length / 2,
+                ),
+                Collision.GOAL_B,
+            ),
+            (
+                # Goal Right Internal Lateral
+                BoundingBox(
+                    self.goal_width / 2,
+                    -self.length / 2 - tol,
+                    self.goal_width / 2,
+                    -self.length / 2,
+                ),
+                Collision.GOAL_B,
+            ),
+            (
+                # Goal Left External Lateral
+                BoundingBox(
+                    -self.goal_width / 2 - 2,
+                    -self.length / 2 - tol,
+                    -self.goal_width / 2 - 2,
+                    -self.length / 2,
+                ),
+                Collision.CORNER_B_LEFT,
+            ),
+            (
+                # Goal Right External Lateral
+                BoundingBox(
+                    self.goal_width / 2 + 2,
+                    -self.length / 2 - tol,
+                    self.goal_width / 2 + 2,
+                    -self.length / 2,
+                ),
+                Collision.CORNER_A_RIGHT,
             ),
         ]
