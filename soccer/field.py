@@ -1,12 +1,31 @@
 import numpy as np
+import pygame
 from OpenGL.GL import (
+    GL_LINEAR,
+    GL_QUADS,
+    GL_REPEAT,
+    GL_RGBA,
+    GL_TEXTURE_2D,
+    GL_TEXTURE_MAG_FILTER,
+    GL_TEXTURE_MIN_FILTER,
+    GL_TEXTURE_WRAP_S,
+    GL_TEXTURE_WRAP_T,
     GL_TRIANGLE_FAN,
+    GL_UNSIGNED_BYTE,
     glBegin,
+    glBindTexture,
+    glDisable,
+    glEnable,
     glEnd,
+    glGenTextures,
     glPopMatrix,
     glPushMatrix,
     glRotatef,
+    glTexCoord2f,
+    glTexImage2D,
+    glTexParameteri,
     glVertex2f,
+    glVertex3f,
 )
 
 from soccer.bresenham import bresenham_circle, bresenham_line
@@ -19,7 +38,11 @@ from soccer.collision import (
 
 
 class Field(Collidable):
-    def __init__(self, size_factor: int = 1):
+    def __init__(
+        self,
+        size_factor: int = 1,
+        texture_path: str = 'soccer/models/grass3.jpg',
+    ):
         self.width = size_factor * 90.0
         self.length = size_factor * 120.0
         self.center_radius = size_factor * 14.15
@@ -30,9 +53,54 @@ class Field(Collidable):
         self.goal_length = size_factor * 8.5
         self.goal_width = size_factor * 18.3
         self.bounding_boxes = self.get_bounding_box()
+        self.texture = self.load_texture(texture_path)
+
+    @staticmethod
+    def load_texture(texture_path):
+        texture_surface = pygame.image.load(texture_path)
+        texture_data = pygame.image.tostring(texture_surface, 'RGBA', True)
+        width, height = texture_surface.get_size()
+
+        texture_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture_id)
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGBA,
+            width,
+            height,
+            0,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            texture_data,
+        )
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        return texture_id
 
     def draw(self):
         glPushMatrix()
+
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture)
+
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(-self.width / 2, -self.length / 2, 0.0)
+
+        glTexCoord2f(5.0, 0.0)
+        glVertex3f(self.width / 2, -self.length / 2, 0.0)
+
+        glTexCoord2f(5.0, 5.0)
+        glVertex3f(self.width / 2, self.length / 2, 0.0)
+
+        glTexCoord2f(0.0, 5.0)
+        glVertex3f(-self.width / 2, self.length / 2, 0.0)
+        glEnd()
+
+        glDisable(GL_TEXTURE_2D)
 
         self._draw_field()
         self._draw_center()
