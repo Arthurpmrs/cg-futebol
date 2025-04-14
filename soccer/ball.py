@@ -1,12 +1,23 @@
 import pygame
 from OpenGL.GL import (
-    glColor3f,
+    GL_LINEAR,
+    GL_RGB,
+    GL_TEXTURE_2D,
+    GL_TEXTURE_MAG_FILTER,
+    GL_TEXTURE_MIN_FILTER,
+    GL_UNSIGNED_BYTE,
+    glBindTexture,
+    glDisable,
+    glEnable,
+    glGenTextures,
     glPopMatrix,
     glPushMatrix,
     glRotatef,
+    glTexImage2D,
+    glTexParameteri,
     glTranslatef,
 )
-from OpenGL.GLUT import glutWireSphere
+from OpenGL.GLU import gluNewQuadric, gluQuadricTexture, gluSphere
 
 from soccer.collision import BoundingBox, Collision, CollisionSystem
 from soccer.score import Score
@@ -16,22 +27,52 @@ class Ball:
     INITIAL_POSITION = [0.0, 0.0]
     SPEED = 2.0
 
-    def __init__(self, radius: float = 10):
+    def __init__(
+        self, radius: float = 10, texture_path: str = 'soccer/models/ball.jpeg'
+    ):
         self.position = [*self.INITIAL_POSITION]
         self.rot_angle = 0.0
         self.radius = radius
+        self.texture = self.load_texture(texture_path)
+
+    @staticmethod
+    def load_texture(texture_path):
+        texture_surface = pygame.image.load(texture_path)
+        texture_data = pygame.image.tostring(texture_surface, 'RGB', True)
+        width, height = texture_surface.get_size()
+
+        texture_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture_id)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGB,
+            width,
+            height,
+            0,
+            GL_RGB,
+            GL_UNSIGNED_BYTE,
+            texture_data,
+        )
+
+        return texture_id
 
     def draw(self):
         glPushMatrix()
 
         glTranslatef(*self.position, 0.0)
         glRotatef(self.rot_angle, 1.0, 1.0, 1.0)
-        glTranslatef(-self.position[0], -self.position[1], 0.0)
-        glTranslatef(*self.position, 0.0)
 
-        glColor3f(0, 0, 0)
-        glutWireSphere(self.radius, 12, 8)
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture)
 
+        quadric = gluNewQuadric()
+        gluQuadricTexture(quadric, True)
+        gluSphere(quadric, self.radius, 32, 16)
+
+        glDisable(GL_TEXTURE_2D)
         glPopMatrix()
 
     def get_bouding_box(self, pos: tuple = None) -> tuple:
@@ -88,5 +129,4 @@ class Ball:
             print('OUT!')
 
     def reset_position(self):
-        # Add some pause before can move the ball
         self.position = [*self.INITIAL_POSITION]
