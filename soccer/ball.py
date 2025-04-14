@@ -20,20 +20,25 @@ from OpenGL.GL import (
 from OpenGL.GLU import gluNewQuadric, gluQuadricTexture, gluSphere
 
 from soccer.collision import BoundingBox, Collision, CollisionSystem
+from soccer.field import Field
 from soccer.score import Score
 
 
 class Ball:
     INITIAL_POSITION = [0.0, 0.0]
-    SPEED = 2.0
+    SPEED = 3.0
 
     def __init__(
-        self, radius: float = 10, texture_path: str = 'soccer/models/ball.jpeg'
+        self,
+        field: Field,
+        radius: float = 10,
+        texture_path: str = 'soccer/models/ball.jpeg',
     ):
         self.position = [*self.INITIAL_POSITION]
         self.rot_angle = 0.0
         self.radius = radius
         self.texture = self.load_texture(texture_path)
+        self.field = field
 
     @staticmethod
     def load_texture(texture_path):
@@ -125,6 +130,14 @@ class Ball:
             self.position = [new_x, new_y]
         elif collision == Collision.PLAYER:
             print('BLOCKED BY PLAYER!')
+        elif collision == Collision.CORNER_A_LEFT:
+            self.position = [-self.field.width / 2, self.field.length / 2]
+        elif collision == Collision.CORNER_A_RIGHT:
+            self.position = [self.field.width / 2, self.field.length / 2]
+        elif collision == Collision.CORNER_B_LEFT:
+            self.position = [-self.field.width / 2, -self.field.length / 2]
+        elif collision == Collision.CORNER_B_RIGHT:
+            self.position = [self.field.width / 2, -self.field.length / 2]
         else:
             print('OUT!')
 

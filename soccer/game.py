@@ -38,7 +38,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.field = Field(size_factor=6)
-        self.ball = Ball()
+        self.ball = Ball(field=self.field)
         self.players = get_n_players(
             positions=[
                 (85.0, 70.0),
