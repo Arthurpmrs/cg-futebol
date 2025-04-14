@@ -1,5 +1,5 @@
-from math import cos, pi, sin
-from random import choice
+from math import atan2, cos, pi, sin, sqrt
+from random import choice, randint, uniform
 
 from OpenGL.GL import (
     GL_QUADS,
@@ -37,12 +37,17 @@ class Player(Collidable):
         size: float = 10.0,
         team_color: tuple[float, float, float] = (0.02, 0.584, 0.98),
     ):
+        self.initial_position = pos
         self.position = pos
         self.size = size
         self.team_color = team_color
         self.skin_color = choice(SKIN_COLORS)
+        self.SPREAD_FACTOR = 2
+        self.s1 = randint(-self.SPREAD_FACTOR, self.SPREAD_FACTOR)
+        self.s2 = randint(-self.SPREAD_FACTOR, self.SPREAD_FACTOR)
+        self.orientation = 0.0
 
-    def draw(self, orientation=0.0):
+    def draw(self):
         x, y = self.position
         radius = self.size / 2
         num_segments = 20
@@ -50,8 +55,8 @@ class Player(Collidable):
         rect_width = 0.7 * self.size
 
         # Player shoulders
-        dx = cos(orientation)
-        dy = sin(orientation)
+        dx = cos(self.orientation)
+        dy = sin(self.orientation)
         px = -dy
         py = dx
 
@@ -84,9 +89,38 @@ class Player(Collidable):
             glVertex2f(x + cos(angle) * radius, y + sin(angle) * radius)
         glEnd()
 
-    def update(self):
-        # Here goes the code to make the players move
-        pass
+    def update(self, bx: float, by: float):
+        if bx == 0 and by == 0:
+            return
+
+        DEFENSE_POSITION_X = 1
+        DEFENSE_POSITION_Y = 250
+        CHANGE_ROUTE_PATTERN_PROB = 0.005
+        THRESHOLD_DISTANCE_FOR_DEFENSE = 200
+
+        change_probability = uniform(0, 1)
+        if change_probability < CHANGE_ROUTE_PATTERN_PROB:
+            self.s1 = randint(-self.SPREAD_FACTOR, self.SPREAD_FACTOR)
+            self.s2 = randint(-self.SPREAD_FACTOR, self.SPREAD_FACTOR)
+
+        x, y = self.position
+        dx = bx - x
+        dy = by - y
+
+        thetha = atan2(dx, dy)
+        self.orientation = -thetha
+
+        d = sqrt(dx**2 + dy**2)
+        if d > THRESHOLD_DISTANCE_FOR_DEFENSE:
+            self.position = (
+                x + self.s1 + 0.03 * (DEFENSE_POSITION_X - x),
+                y + self.s2 + 0.03 * (DEFENSE_POSITION_Y - y),
+            )
+        else:
+            self.position = (
+                x + self.s1 + 0.02 * dx,
+                y + self.s2 + 0.02 * dy,
+            )
 
     def get_bounding_box(self) -> BoundingBox:
         return BoundingBox(
@@ -100,6 +134,10 @@ class Player(Collidable):
         if CollisionSystem.aabb_collision(bb, self.get_bounding_box()):
             return Collision.PLAYER
         return Collision.NONE
+
+    def reset_position(self):
+        self.position = self.initial_position
+        self.orientation = 0.0
 
 
 def get_n_players(

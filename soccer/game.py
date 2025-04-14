@@ -75,6 +75,9 @@ class Game:
         self.ball.reset_position()
         self.score.reset_score()
 
+        for player in self.players:
+            player.reset_position()
+
     def run(self):
         running = True
         while running:
@@ -91,6 +94,8 @@ class Game:
 
             keys = pygame.key.get_pressed()
             self.ball.update(keys, self.collision_system, self.score)
+            for player in self.players:
+                player.update(*self.ball.position)
 
             glClear(GL_COLOR_BUFFER_BIT)
             glClearColor(0.0, 0.65, 0.075, 1)
