@@ -5,8 +5,8 @@ Seja a bola, enfrente seus inimigos.
 "Uma experiência imersiva, 10/10" - IGN
 
 ## Equipe
-Arthur Pontes de Miranda Ramos Soares
-Beatriz Rodrigues Cavalcante
+- Arthur Pontes de Miranda Ramos Soares
+- Beatriz Rodrigues Cavalcante
 
 ## Como executar
 1. Instale o gestor de dependências UV (Python) em https://docs.astral.sh/uv/getting-started/installation/
