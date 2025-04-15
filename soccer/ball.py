@@ -29,13 +29,13 @@ from soccer.score import Score
 
 class Ball:
     INITIAL_POSITION = [0.0, 0.0]
-    SPEED = 2.0
+    SPEED = 3.0
 
     def __init__(
         self,
         field: Field,
         radius: float = 10,
-        texture_path: str = 'soccer/models/ball.jpeg',
+        texture_path: str = 'soccer/assets/ball.jpeg',
     ):
         self.position = [*self.INITIAL_POSITION]
         self.rot_angle = 0.0

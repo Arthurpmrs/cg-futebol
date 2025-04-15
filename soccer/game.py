@@ -27,6 +27,7 @@ class Game:
         self.win_width = 1000
         self.win_height = 800
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_mode(
             (self.win_width, self.win_height), pygame.OPENGL | pygame.DOUBLEBUF
         )
@@ -62,6 +63,9 @@ class Game:
         )
         self.collision_system = CollisionSystem()
         self.collision_system.add_collidable(self.field)
+        self.opening_sfx = pygame.mixer.Sound(
+            'soccer/assets/galvao-opening.mp3'
+        )
         self.score = Score()
         for player in self.players:
             self.collision_system.add_collidable(player)
@@ -91,6 +95,8 @@ class Game:
                 player.reset_position()
 
     def run(self):
+        self.opening_sfx.play()
+
         running = True
         while running:
             # Handle forced pause. No entity should move
