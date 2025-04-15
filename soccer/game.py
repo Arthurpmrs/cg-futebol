@@ -59,6 +59,9 @@ class Game:
         )
         self.collision_system = CollisionSystem()
         self.collision_system.add_collidable(self.field)
+        self.opening_sfx = pygame.mixer.Sound(
+            'soccer/assets/galvao-opening.mp3'
+        )
         self.score = Score()
         for player in self.players:
             self.collision_system.add_collidable(player)
@@ -80,6 +83,8 @@ class Game:
             player.reset_position()
 
     def run(self):
+        self.opening_sfx.play()
+
         running = True
         while running:
             for event in pygame.event.get():
