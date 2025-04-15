@@ -1,3 +1,5 @@
+import time
+
 import pygame
 from OpenGL.GL import (
     GL_COLOR_BUFFER_BIT,
@@ -37,6 +39,7 @@ class Game:
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+        self.pause = 0.0
         self.clock = pygame.time.Clock()
         self.field = Field(size_factor=6)
         self.ball = Ball(field=self.field)
@@ -82,26 +85,23 @@ class Game:
         for player in self.players:
             player.reset_position()
 
+    def set_pause(self, t: float, reset_players: bool = True):
+        self.pause = time.time() + t
+
+        if reset_players:
+            for player in self.players:
+                player.reset_position()
+
     def run(self):
         self.opening_sfx.play()
 
         running = True
         while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mx, my = self.convert_mouse_pos(*pygame.mouse.get_pos())
-                    if self.button.is_clicked(mx, my):
-                        self.on_reset_button_click()
-                elif event.type == pygame.MOUSEMOTION:
-                    mx, my = self.convert_mouse_pos(*pygame.mouse.get_pos())
-                    self.button.update(mx, my)
-
-            keys = pygame.key.get_pressed()
-            self.ball.update(keys, self.collision_system, self.score)
-            for player in self.players:
-                player.update(*self.ball.position)
+            # Handle forced pause. No entity should move
+            if self.pause == 0.0:
+                running = self._update_entities()
+            elif time.time() > self.pause:
+                self.pause = 0.0
 
             glClear(GL_COLOR_BUFFER_BIT)
             glClearColor(0.0, 0.65, 0.075, 1)
@@ -118,3 +118,24 @@ class Game:
             self.clock.tick(60)
 
         pygame.quit()
+
+    def _update_entities(self) -> bool:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = self.convert_mouse_pos(*pygame.mouse.get_pos())
+                if self.button.is_clicked(mx, my):
+                    self.on_reset_button_click()
+            elif event.type == pygame.MOUSEMOTION:
+                mx, my = self.convert_mouse_pos(*pygame.mouse.get_pos())
+                self.button.update(mx, my)
+
+        keys = pygame.key.get_pressed()
+        self.ball.update(
+            keys, self.collision_system, self.score, self.set_pause
+        )
+        for player in self.players:
+            player.update(*self.ball.position)
+
+        return True
