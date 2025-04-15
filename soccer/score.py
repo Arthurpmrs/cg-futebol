@@ -59,7 +59,7 @@ class Score:
     def draw_goal_text(self):
         if self.show_goal_text:
             elapsed = time.time() - self.goal_start_time
-            text = 'GOOOOL!'
+            text = 'GOOOOAL!'
             glPushMatrix()
             glTranslatef(-130, 0, 0)
             glColor3f(1, 1, 0)
