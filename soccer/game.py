@@ -17,6 +17,7 @@ from soccer.ball import Ball
 from soccer.button import Button
 from soccer.collision import CollisionSystem
 from soccer.field import Field
+from soccer.overlay import TextOverlay
 from soccer.players import get_n_players
 from soccer.score import Score
 
@@ -68,6 +69,7 @@ class Game:
         self.score = Score()
         for player in self.players:
             self.collision_system.add_collidable(player)
+        self.overlay = TextOverlay()
 
     def convert_mouse_pos(self, mx: float, my: float):
         normalized_x = mx / self.win_width
@@ -113,6 +115,7 @@ class Game:
             for player in self.players:
                 player.draw()
             self.button.draw()
+            self.overlay.draw()
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -133,7 +136,11 @@ class Game:
 
         keys = pygame.key.get_pressed()
         self.ball.update(
-            keys, self.collision_system, self.score, self.set_pause
+            keys,
+            self.collision_system,
+            self.score,
+            self.set_pause,
+            self.overlay,
         )
         for player in self.players:
             player.update(*self.ball.position)

@@ -23,6 +23,7 @@ from OpenGL.GLU import gluNewQuadric, gluQuadricTexture, gluSphere
 
 from soccer.collision import BoundingBox, Collision, CollisionSystem
 from soccer.field import Field
+from soccer.overlay import TextOverlay
 from soccer.score import Score
 
 
@@ -99,6 +100,7 @@ class Ball:
         collision_system: CollisionSystem,
         score: Score,
         set_pause: Callable,
+        overlay: TextOverlay,
     ):
         new_x, new_y = self.position
         if keys[pygame.K_LEFT]:
@@ -137,20 +139,26 @@ class Ball:
             print('BLOCKED BY PLAYER!')
         elif collision == Collision.CORNER_A_LEFT:
             self.position = [-self.field.width / 2, self.field.length / 2]
+            overlay.show_text('CORNER')
             set_pause(3)
         elif collision == Collision.CORNER_A_RIGHT:
             self.position = [self.field.width / 2, self.field.length / 2]
+            overlay.show_text('CORNER')
             set_pause(3)
         elif collision == Collision.CORNER_B_LEFT:
             self.position = [-self.field.width / 2, -self.field.length / 2]
+            overlay.show_text('CORNER')
             set_pause(3)
         elif collision == Collision.CORNER_B_RIGHT:
             self.position = [self.field.width / 2, -self.field.length / 2]
+            overlay.show_text('CORNER')
             set_pause(3)
         elif collision == Collision.LATERAL_LEFT:
             self.position = [-self.field.width / 2, new_y]
+            overlay.show_text('SIDE')
             set_pause(3, reset_players=False)
         elif collision == Collision.LATERAL_RIGHT:
+            overlay.show_text('SIDE')
             self.position = [self.field.width / 2, new_y]
             set_pause(3, reset_players=False)
         else:
