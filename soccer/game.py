@@ -24,6 +24,7 @@ class Game:
         self.win_width = 1000
         self.win_height = 800
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_mode(
             (self.win_width, self.win_height), pygame.OPENGL | pygame.DOUBLEBUF
         )

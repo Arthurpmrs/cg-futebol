@@ -41,7 +41,7 @@ class Field(Collidable):
     def __init__(
         self,
         size_factor: int = 1,
-        texture_path: str = 'soccer/models/grass3.jpg',
+        texture_path: str = 'soccer/assets/grass3.jpg',
     ):
         self.width = size_factor * 90.0
         self.length = size_factor * 120.0
@@ -54,6 +54,7 @@ class Field(Collidable):
         self.goal_width = size_factor * 18.3
         self.bounding_boxes = self.get_bounding_box()
         self.texture = self.load_texture(texture_path)
+        
 
     @staticmethod
     def load_texture(texture_path):

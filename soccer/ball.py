@@ -32,7 +32,7 @@ class Ball:
         self,
         field: Field,
         radius: float = 10,
-        texture_path: str = 'soccer/models/ball.jpeg',
+        texture_path: str = 'soccer/assets/ball.jpeg',
     ):
         self.position = [*self.INITIAL_POSITION]
         self.rot_angle = 0.0

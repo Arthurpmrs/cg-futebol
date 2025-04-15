@@ -1,6 +1,7 @@
 import math
 import time
 
+import pygame
 from OpenGL.GL import (
     glColor3f,
     glPopMatrix,
@@ -30,6 +31,7 @@ class Score:
         self.goal_timer = 0
         self.goal_start_timer = 0
         self.show_goal_text = False
+        self.gol_sfx = pygame.mixer.Sound('soccer/assets/galva-gol.mp3')
 
     def add_points(self, team):
         if team == 'A':
@@ -55,6 +57,7 @@ class Score:
         self.show_goal_text = True
         self.goal_timer = 250
         self.goal_start_time = time.time()
+        self.gol_sfx.play()
 
     def draw_goal_text(self):
         if self.show_goal_text:
