@@ -1,3 +1,5 @@
+from typing import Callable
+
 import pygame
 from OpenGL.GL import (
     GL_LINEAR,
@@ -26,7 +28,7 @@ from soccer.score import Score
 
 class Ball:
     INITIAL_POSITION = [0.0, 0.0]
-    SPEED = 3.0
+    SPEED = 2.0
 
     def __init__(
         self,
@@ -96,6 +98,7 @@ class Ball:
         keys: pygame.key.ScancodeWrapper,
         collision_system: CollisionSystem,
         score: Score,
+        set_pause: Callable,
     ):
         new_x, new_y = self.position
         if keys[pygame.K_LEFT]:
@@ -121,23 +124,35 @@ class Ball:
             score.on_goal()
             self.position = [0.0, 0.0]
             print('GOAL FROM A')
+            set_pause(3)
         elif collision == Collision.GOAL_B:
             score.add_points('B')
             score.on_goal()
             self.position = [0.0, 0.0]
             print('GOAL FROM B')
+            set_pause(3)
         elif collision == Collision.NONE:
             self.position = [new_x, new_y]
         elif collision == Collision.PLAYER:
             print('BLOCKED BY PLAYER!')
         elif collision == Collision.CORNER_A_LEFT:
             self.position = [-self.field.width / 2, self.field.length / 2]
+            set_pause(3)
         elif collision == Collision.CORNER_A_RIGHT:
             self.position = [self.field.width / 2, self.field.length / 2]
+            set_pause(3)
         elif collision == Collision.CORNER_B_LEFT:
             self.position = [-self.field.width / 2, -self.field.length / 2]
+            set_pause(3)
         elif collision == Collision.CORNER_B_RIGHT:
             self.position = [self.field.width / 2, -self.field.length / 2]
+            set_pause(3)
+        elif collision == Collision.LATERAL_LEFT:
+            self.position = [-self.field.width / 2, new_y]
+            set_pause(3, reset_players=False)
+        elif collision == Collision.LATERAL_RIGHT:
+            self.position = [self.field.width / 2, new_y]
+            set_pause(3, reset_players=False)
         else:
             print('OUT!')
 
