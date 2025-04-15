@@ -155,10 +155,10 @@ class Ball:
             set_pause(3)
         elif collision == Collision.LATERAL_LEFT:
             self.position = [-self.field.width / 2, new_y]
-            overlay.show_text('SIDE')
+            overlay.show_text('LATERAL')
             set_pause(3, reset_players=False)
         elif collision == Collision.LATERAL_RIGHT:
-            overlay.show_text('SIDE')
+            overlay.show_text('LATERAL')
             self.position = [self.field.width / 2, new_y]
             set_pause(3, reset_players=False)
         else:
